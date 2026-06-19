@@ -1262,38 +1262,50 @@ function renderPhotosTab() {
   });
 }
 
-// ---- Image Compression Logic ----
+// ---- Image Compression Logic (Memory Optimized) ----
 function compressFile(file, section) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = async () => {
-      const max = 1280;
-      let w = img.width;
-      let h = img.height;
-      
-      // Calculate aspect ratio
-      if (w > h && w > max) {
-        h = Math.round((h * max) / w);
-        w = max;
-      } else if (h >= w && h > max) {
-        w = Math.round((w * max) / h);
-        h = max;
-      }
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
-      await savePhoto(section, compressedDataUrl);
-    };
-    img.src = reader.result;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = async () => {
+    // Release the Object URL immediately to free memory!
+    URL.revokeObjectURL(url);
+    
+    const max = 1024; // Decreased from 1280 to 1024 to save 40% memory on decoded bitmap
+    let w = img.width;
+    let h = img.height;
+    
+    // Calculate aspect ratio
+    if (w > h && w > max) {
+      h = Math.round((h * max) / w);
+      w = max;
+    } else if (h >= w && h > max) {
+      w = Math.round((w * max) / h);
+      h = max;
+    }
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    
+    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+    
+    // Clean up canvas and image objects to force immediate GC
+    canvas.width = 0;
+    canvas.height = 0;
+    img.onload = null;
+    
+    await savePhoto(section, compressedDataUrl);
   };
-  reader.readAsDataURL(file);
+  
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    toast("Erreur de décodage de l'image.");
+  };
+  
+  img.src = url;
 }
 
 document.getElementById('fileInput').onchange = e => {
