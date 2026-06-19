@@ -477,17 +477,11 @@ async function renderHome() {
         Importer
       </button>
     </div>
-    
-    <button class="fab" id="fabAdd" aria-label="Ajouter une visite">
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
-    </button>
   `;
   
   appEl.innerHTML = html;
   
   // Set up event listeners
-  document.getElementById('fabAdd').onclick = renderNew;
-  
   const btnEmptyAdd = document.getElementById('btnEmptyAdd');
   if (btnEmptyAdd) btnEmptyAdd.onclick = renderNew;
   
