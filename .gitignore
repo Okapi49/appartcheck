@@ -1,0 +1,7 @@
+# System Files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Temporary Script
+generate_icons.py
