@@ -425,6 +425,7 @@ async function renderHome() {
       <div class="empty">
         <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h18M10.5 3h3.75a1.125 1.125 0 011.125 1.125V21"></path></svg>
         <span>Aucun appartement enregistré pour le moment.</span>
+        <button class="btn" id="btnEmptyAdd" style="margin-top: 16px; max-width: 280px; align-self: center;">➕ Ajouter une visite</button>
       </div>
     `;
   } else {
@@ -460,6 +461,7 @@ async function renderHome() {
         </div>
       `;
     });
+    html += `<button class="btn" id="btnListAdd" style="margin-top: 10px; margin-bottom: 20px;">➕ Ajouter un appartement</button>`;
   }
   html += `</div>`;
   
@@ -485,6 +487,13 @@ async function renderHome() {
   
   // Set up event listeners
   document.getElementById('fabAdd').onclick = renderNew;
+  
+  const btnEmptyAdd = document.getElementById('btnEmptyAdd');
+  if (btnEmptyAdd) btnEmptyAdd.onclick = renderNew;
+  
+  const btnListAdd = document.getElementById('btnListAdd');
+  if (btnListAdd) btnListAdd.onclick = renderNew;
+  
   document.getElementById('exportBtn').onclick = exportAll;
   document.getElementById('importBtn').onclick = () => document.getElementById('importInput').click();
   
